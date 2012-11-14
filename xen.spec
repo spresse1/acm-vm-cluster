@@ -41,6 +41,17 @@ echo "Build root is: $RPM_BUILD_ROOT"
 
 %post
 ldconfig
+ln -s /etc/init.d/xendomains /etc/rc0.d/S10xendomains
+ln -s /etc/init.d/xendomains /etc/rc6.d/S10xendomains
+ln -s /etc/init.d/xencommons /etc/rc3.d/S98xencommons
+ln -s /etc/init.d/xendomains /etc/rc3.d/S98xendomains
+ln -s /root/xendom0caps /etc/rc3.d/S98xendom0caps
 
 %postun
 ldconfig
+rm /etc/rc0.d/S10xendomains
+rm /etc/rc6.d/S10xendomains
+rm /etc/rc3.d/S98xencommons
+rm /etc/rc3.d/S98xendomains
+rm /etc/rc3.d/S98xendom0caps
+
