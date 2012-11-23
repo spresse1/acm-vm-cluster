@@ -56,6 +56,7 @@ bzip2 -9 vmlinux
 mv vmlinux.bz2 $RPM_BUILD_ROOT/boot/vmlinux-3.6.6-acm-xen.bz2
 mv vmlinux.orig vmlinux
 %endif
+mkinitrd $RPM_BUILD_ROOT/boot/initrd-3.6.6-acm-xen.img 3.6.6-acm-xen
 
 %clean
 rm -rf $RPM_BUILD_ROOT
