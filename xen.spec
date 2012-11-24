@@ -25,10 +25,13 @@ Lets face it - if you're looking at this, you already know what Xen is.  Its a h
 %install
 #make install
 #DISTDIR="$RPM_BUILD_ROOT" make dist
+make xen
+make tools
+make stubdom
 DESTDIR="$RPM_BUILD_ROOT" make install
-mkdir -p "$RPM_BUILD_ROOT/etc/ld.so.conf.d"
-echo "/usr/lib/
-/usr/lib64" >> "$RPM_BUILD_ROOT/etc/ld.so.conf.d/xen.conf"
+#mkdir -p "$RPM_BUILD_ROOT/etc/ld.so.conf.d"
+#echo "/usr/lib/
+#/usr/lib64" >> "$RPM_BUILD_ROOT/etc/ld.so.conf.d/xen.conf"
 echo "Build root is: $RPM_BUILD_ROOT"
 #cp -rnp "$RPM_BUILD_ROOT/install" "$RPM_BUILD_ROOT/usr"
 
@@ -46,6 +49,12 @@ ln -s /etc/init.d/xendomains /etc/rc6.d/S10xendomains
 ln -s /etc/init.d/xencommons /etc/rc3.d/S98xencommons
 ln -s /etc/init.d/xendomains /etc/rc3.d/S98xendomains
 ln -s /root/xendom0caps /etc/rc3.d/S98xendom0caps
+chkconfig --level 345 xencommons on
+chkconfig --level 345 xend on
+
+%preun
+chkconfig xencommons off
+chkconfig xend off
 
 %postun
 ldconfig
