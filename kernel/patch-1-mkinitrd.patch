@@ -4,7 +4,7 @@
  mv vmlinux.bz2 $RPM_BUILD_ROOT/boot/vmlinux-3.6.6-acm-xen.bz2
  mv vmlinux.orig vmlinux
  %endif
-+mkinitrd $RPM_BUILD_ROOT/boot/initrd-3.6.6-acm-xen.img 3.6.6-acm-xen
++mkinitrd $RPM_BUILD_ROOT/boot/initramfs-3.6.6-acm.img 3.6.6-acm
  
  %clean
  rm -rf $RPM_BUILD_ROOT
