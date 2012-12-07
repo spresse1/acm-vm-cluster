@@ -1,10 +1,10 @@
---- binkernel.spec	2012-11-23 16:07:49.000000000 -0500
-+++ binkernel.spec	2012-11-23 18:06:30.000000000 -0500
-@@ -56,6 +56,7 @@
- mv vmlinux.bz2 $RPM_BUILD_ROOT/boot/vmlinux-3.6.6-acm-xen.bz2
- mv vmlinux.orig vmlinux
- %endif
-+mkinitrd $RPM_BUILD_ROOT/boot/initramfs-3.6.6-acm.img 3.6.6-acm
+--- scripts/package/mkspec	2012-11-26 11:30:20.000000000 -0500
++++ scripts/package/mkspec	2012-11-26 11:31:48.000000000 -0500
+@@ -106,6 +106,7 @@
+ echo 'mv vmlinux.bz2 $RPM_BUILD_ROOT'"/boot/vmlinux-$KERNELRELEASE.bz2"
+ echo 'mv vmlinux.orig vmlinux'
+ echo "%endif"
++echo 'mkinitrd $RPM_BUILD_ROOT/boot/initramfs-$KERNELRELEASE.img $KERNELRELEASE'
  
- %clean
- rm -rf $RPM_BUILD_ROOT
+ echo ""
+ echo "%clean"
