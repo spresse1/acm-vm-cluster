@@ -23,13 +23,13 @@ MX software for Myrinet
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build
-./configure --prefix="$RPM_BUILDROOT_DIR"
+./configure --prefix="$RPM_BUILDROOT_DIR/opt/mx"
 make
 
 %install
 echo "beginning insall"
 make DESTDIR="$RPM_BUILD_ROOT" install
-rm "$RPM_BUILD_ROOT/lib"
+#rm "$RPM_BUILD_ROOT/lib"
 
 %files
 %defattr(-,root,root)
