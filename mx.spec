@@ -29,7 +29,7 @@ make
 %install
 echo "beginning insall"
 make DESTDIR="$RPM_BUILD_ROOT" install
-#rm "$RPM_BUILD_ROOT/lib"
+rm "$RPM_BUILD_ROOT/opt/mx/lib"
 
 %files
 %defattr(-,root,root)
