@@ -1,0 +1,52 @@
+diff -urpN mx-1.2.16-orig/driver/linux/mx.c mx-1.2.16/driver/linux/mx.c
+--- mx-1.2.16-orig/driver/linux/mx.c	2012-03-16 17:30:11.000000000 -0400
++++ mx-1.2.16/driver/linux/mx.c	2012-12-08 15:10:58.428527675 -0500
+@@ -3387,13 +3387,13 @@ mx_copy_to_user_mm(mx_uaddr_t udst, void
+     if (status != 1) {
+       return -status;
+     }
+-    kdst = kmap_atomic(page, KM_USER0);
++    kdst = kmap_atomic(page);
+     /* copy_to_user_page should be used instead. But it uses some symbols that
+      * are not exported on some architectures...
+      */
+     memcpy(kdst+offset, ksrc, chunk);
+     mx_set_page_dirty_lock(page);
+-    kunmap_atomic(kdst, KM_USER0);
++    kunmap_atomic(kdst);
+     put_page(page);
+     ksrc += chunk;
+     udst += chunk;
+@@ -3425,12 +3425,12 @@ mx_copy_from_user_mm(char *kdst, mx_uadd
+     if (status != 1) {
+       return -status;
+     }
+-    ksrc = kmap_atomic(page, KM_USER0);
++    ksrc = kmap_atomic(page);
+     /* copy_from_user_page should be used instead. But it uses some symbols that
+      * are not exported on some architectures...
+      */
+     memcpy(kdst, ksrc+offset, chunk);
+-    kunmap_atomic(ksrc, KM_USER0);
++    kunmap_atomic(ksrc);
+     put_page(page);
+     usrc += chunk;
+     kdst += chunk;
+diff -urpN mx-1.2.16-orig/driver/linux/mx_ether.c mx-1.2.16/driver/linux/mx_ether.c
+--- mx-1.2.16-orig/driver/linux/mx_ether.c	2012-03-16 17:30:11.000000000 -0400
++++ mx-1.2.16/driver/linux/mx_ether.c	2012-12-08 15:13:03.796752917 -0500
+@@ -1712,14 +1712,6 @@ static MX_ETHTOOL_OPS_TYPE mx_ethtool_op
+ 	.get_drvinfo			= mx_ether_get_drvinfo,
+ 	.get_coalesce			= mx_ether_get_coalesce,
+ 	.set_coalesce			= mx_ether_set_coalesce,
+-	.get_rx_csum			= mx_ether_get_rx_csum,
+-	.set_rx_csum			= mx_ether_set_rx_csum,
+-	/* get_tx_csum, get_sg and get_tso are set by default since 2.6.24 */
+-	.get_tx_csum			= mx_ether_get_tx_csum,
+-	.set_tx_csum			= mx_ether_set_tx_csum,
+-	.get_sg				= ethtool_op_get_sg,
+-	.get_tso			= ethtool_op_get_tso,
+-	.set_sg				= ethtool_op_set_sg,
+ 	.get_link			= ethtool_op_get_link,
+ 	.get_strings			= mx_ether_get_strings,
+ #ifdef HAVE_SSET_COUNT
