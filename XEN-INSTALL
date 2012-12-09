@@ -1,0 +1,19 @@
+Dependancies:
+python-devel
+dev86
+iasl
+libuuid-devel
+ncurses-devel
+glib2-devel
+openssl-devel
+yajl-devel
+
+Build-time dependancies:
+git
+patch
+make
+texinfo
+
+Use xen.spec in this directory to install xen.
+Magic line to install build-time dependancies:
+# yum install -y `rpmbuild -ba ~/rpmbuild/SPECS/xen.spec 2>&1 | grep 'is needed by' | awk '{print $1}' | xargs`
