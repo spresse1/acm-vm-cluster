@@ -52,8 +52,8 @@ ln -s /lib64/libmyriexpress.so /lib/libmyriexpress.so
 ln -s /lib64/libmyriexpress.a /lib/libmyriexpress.a
 
 if [ -n "`/sbin/lspci -d 14c1:`" ] ; then
-  /opt/mx/sbin/mx_local_install
-   chkconfig --add mx || /bin/true
+  /sbin/mx_local_install
+  chkconfig --add mx || /bin/true
 fi
 
 %preun
