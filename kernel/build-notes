@@ -2,7 +2,7 @@ The following are build notes on making a xen-compatable kernel on a CentOS 6 ma
 If I stop being lazy, I'll turn this into a script.
 
 To install all required packages:
-# yum install rpm-build redhat-rpm-config patchutils xmlto asciidoc elfutils-libelf-devel zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) gtk2-devel bison
+# yum install -y rpm-build redhat-rpm-config patchutils xmlto asciidoc elfutils-libelf-devel zlib-devel binutils-devel newt-devel python-devel 'perl(ExtUtils::Embed)' gtk2-devel bison
 
 Get the kernel source from kernel.org, put it in rpmbuild/SOURCES/
 $ cd rpmbuild/SOURCES; wget [source pkg]; cd
