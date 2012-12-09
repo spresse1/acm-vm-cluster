@@ -11,9 +11,6 @@ Prefix: /usr/local
 Source: http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz
 Patch0: mx-update-to-3.x.patch
 
-#%define _rpmdir .
-#%define _rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm
-
 %description
 MX software for Myrinet
 
