@@ -1,0 +1,15 @@
+The following are build notes on making a xen-compatable kernel on a CentOS 6 machine.  These directions were developed using the spec file created by the elrepo.org folks.
+If I stop being lazy, I'll turn this into a script.
+
+To install all required packages:
+# yum install rpm-build redhat-rpm-config patchutils xmlto asciidoc elfutils-libelf-devel zlib-devel binutils-devel newt-devel python-devel perl(ExtUtils::Embed) gtk2-devel bison
+
+Get the kernel source from kernel.org, put it in rpmbuild/SOURCES/
+$ cd rpmbuild/SOURCES; wget [source pkg]; cd
+
+Copy in kernel config file
+# cp [source] rpmbuild/SOURCES/config-[kernel-version]-i686
+# cp [source] rpmbuild/SOURCES/config-[kernel-version]-i686-NONPAE
+# cp [source] rpmbuild/SOURCES/config-[kernel-version]-x86_64
+
+$ rpmbuild -ba kernel-ml-3.6.spec
