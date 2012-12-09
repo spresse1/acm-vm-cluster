@@ -12,6 +12,8 @@ URL: http://www.xen.org/
 Distribution: CentOS6
 Vendor: Citrix Systems with RPM built by JHUACM
 Packager: Steven Presser <spresse1@acm.jhu.edu>
+BuildRequires: git, patch, make, texinfo, python-devel, dev86, iasl, yajl-devel
+BuildRequires: libuuid-devel, ncurses-devel, glib2-devel, openssl-devel
 
 %description
 Lets face it - if you're looking at this, you already know what Xen is.  Its a hypervisor so you can run your VMs.  Its rather featureful.
