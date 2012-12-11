@@ -7,9 +7,9 @@ This directory contains all the things related to building and customizing ceph 
 <pre>
 $ cd ceph-0.48argonaut
 $ patch -p1 < fix-spec.patch
-Youll also want to change who owns the spec file (as RPM tosses an error if it can't find a real user who owns the spec file):
-$ chown USER:GROUP ceph.spec
 </pre>
+Youll also want to change who owns the spec file (as RPM tosses an error if it can't find a real user who owns the spec file):
+```$ chown USER:GROUP ceph.spec```
 
 ##Build Process##
 * set up your RPM build root
