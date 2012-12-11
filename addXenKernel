@@ -1,0 +1,44 @@
+#!/bin/sh
+
+#This script adds the xen kernel to the relevent grub boot files, tehn repoints
+#the default kernel to be a xen kernel
+
+#/etc/grub.conf is a symlink to this file anyway...
+FILES="/boot/grub/grub.conf /etc/grub.conf"
+
+for FILE in $FILES
+do
+	if [[ -f "$FILE" && ! -L "$FILE" ]] #file exists and is not a symlink
+	then
+		NUMKER=`cat $FILE | grep title | wc -l`
+		BOOTKER=`cat $FILE | grep default | awk -F= '{print $2}'`
+		echo "Updating $FILE"
+		echo "Contains $NUMKER kernel configurations"
+		echo "With $BOOTKER as default"
+		#Oh god.  spresse1/spressel is reposible for this terrible
+		#awk script.  Go bash him over the head
+		cat "$FILE" | awk -v XENVER="`rpm --qf '%{VERSION}' -qa xen`" \
+			'/[Tt][Ii][Tt][Ll][Ee]/,/^\s*$/ { #match lines that start with
+							# title to one that is 0 or 
+							#more space charaters 
+			if(tolower($1)=="title") { #if line starts with title
+				# Append "on Xen (version)", then a kernel line for xen
+				print $0,"on Xen",XENVER,"\n\tkernel /boot/xen-"XENVER".gz" 
+			} else if (tolower($1)=="kernel") { 
+				#kernel becomes module, but only at the start of the line
+				sub(/[Kk][Ee][Rr][Nn][Ee][Ll]/, "module", $0); 
+				print $0 
+			}  else if (tolower($1)=="initrd") { 
+				#initrd becomes module at start of line
+				sub(/[Ii][Nn][Ii][Tt][Rr][Dd]/, "module", $0); 
+				print $0 
+			} else { 
+				#everything else gets left alone
+				print $0 
+			}
+		}' >>"$FILE" #and append modified kernel record
+		
+		#change to the new record's equivalent of the old one
+		cat "$FILE" | sed "s/default=$BOOTKER/default=$(( $BOOTKER + $NUMKER ))/gim" | tee "$FILE"
+	fi
+done
