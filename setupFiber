@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# This file is designed to auto set up the Myricom fiber cards in the nodes.  MUST be located in /install/postscripts and be world readable.
+
+#first, lets check mx got installed
+if [ ! -z "`rpm -qa | grep mx`" ]
+then
+	#This is a mostly precooked config file
+	#What remains to be fetched is in `` in the code
+	#We assume a device named myri0
+	echo "DEVICE=\"myri0\"
+BOOTPROTO=\"none\"
+SRCADDR=\"`dig \`hostname\`-fiber.bosca.acm.jhu.edu +short`\"
+NETMASK=\"255.255.0.0\"
+HWADDR=\"`ip link show myri0 | tail -n 1 | awk '{print $2}'`\"
+IPV6INIT=\"yes\"
+MTU=\"`ip link show myri0 | head -n 1 | awk '{print $5}'`\"
+NM_CONTROLLED=\"yes\"
+ONBOOT=\"yes\"
+TYPE=\"Ethernet\"
+UUID=\"`uuidgen`\"" > /etc/sysconfig/network-scripts/ifcfg-myri0
+
+fi
