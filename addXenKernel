@@ -8,7 +8,8 @@ FILES="/boot/grub/grub.conf /etc/grub.conf"
 
 for FILE in $FILES
 do
-	if [[ -f "$FILE" && ! -L "$FILE" ]] #file exists and is not a symlink
+	XENVER="`rpm --qf '%{VERSION}' -qa xen`" #get xen version, if any
+	if [[ -n "XENVER" && -f "$FILE" && ! -L "$FILE" ]] #file exists and is not a symlink
 	then
 		NUMKER=`cat $FILE | grep title | wc -l`
 		BOOTKER=`cat $FILE | grep default | awk -F= '{print $2}'`
@@ -17,7 +18,7 @@ do
 		echo "With $BOOTKER as default"
 		#Oh god.  spresse1/spressel is reposible for this terrible
 		#awk script.  Go bash him over the head
-		cat "$FILE" | awk -v XENVER="`rpm --qf '%{VERSION}' -qa xen`" \
+		cat "$FILE" | awk -v XENVER="$XENVER" \
 			'/[Tt][Ii][Tt][Ll][Ee]/,/^\s*$/ { #match lines that start with
 							# title to one that is 0 or 
 							#more space charaters 
