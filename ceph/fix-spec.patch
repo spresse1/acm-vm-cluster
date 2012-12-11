@@ -1,0 +1,12 @@
+diff -ruN ceph-0.48argonaut/ceph.spec ceph-0.48argonaut-mod/ceph.spec
+--- ceph-0.48argonaut/ceph.spec	2012-07-02 19:06:48.000000000 -0400
++++ ceph-0.48argonaut-mod/ceph.spec	2012-12-11 12:00:24.000000000 -0500
+@@ -290,6 +290,8 @@
+ %dir %{_libdir}/rados-classes
+ /sbin/mkcephfs
+ /sbin/mount.ceph
++/sbin/ceph-disk-activate
++/sbin/ceph-disk-prepare
+ %{_libdir}/ceph
+ %config %{_sysconfdir}/bash_completion.d/ceph
+ %config %{_sysconfdir}/bash_completion.d/rados
