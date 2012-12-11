@@ -10,7 +10,7 @@ then
 	#We assume a device named myri0
 	echo "DEVICE=\"myri0\"
 BOOTPROTO=\"none\"
-SRCADDR=\"`dig \`hostname\`-fiber.bosca.acm.jhu.edu +short`\"
+IPADDR=\"`dig \`hostname\`-fiber.bosca.acm.jhu.edu +short`\"
 NETMASK=\"255.255.0.0\"
 HWADDR=\"`ip link show myri0 | tail -n 1 | awk '{print $2}'`\"
 IPV6INIT=\"yes\"
