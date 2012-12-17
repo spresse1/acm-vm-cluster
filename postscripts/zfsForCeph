@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# First, we need to take this action for all raw devices...
+# For simplicity here, I have made the assumption that raw disk devices are
+# /dev/hd* and /dev/sd* - that is partitons on all 
+
+# Where should the zpool mount?  We wipe out any data already here.
+MOUNTDIR=/var/lib/ceph
+
+#Not for touching.
+RAWDISKS=""
+
+for DISK in `ls /dev/{h,s}d*`
+do
+	if [ ! -z "`parted $DISK print list | grep 'Error'`" ]
+	then
+		#found a raw disk
+		RAWDISKS="${RAWDISKS} $DISK"
+	fi
+done
+
+# Now add all the raw disks we found into a zpool (tanked, Ceph does the 
+# redundancy)
+
+if [ ! -z "$RAWDISKS" ]
+then
+	rm -rf "$MOUNTDIR"
+	zpool create -m "$MOUNTDIR" -o failmode=panic ceph $RAWDISKS
+else
+	print "Couldnt find raw disks to use!"
+	return 1
+fi
