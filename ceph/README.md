@@ -11,6 +11,14 @@ $ patch -p1 < fix-spec.patch
 Youll also want to change who owns the spec file (as RPM tosses an error if it can't find a real user who owns the spec file):
 ```$ chown USER:GROUP ceph.spec```
 
+This patch is obsolete with the 0.56.1 (bobtail) release, which comes with RPMs from http://ceph.com/docs/master/install/rpm/
+
+* cephNodeChange.pm - a perl script which runs within the xCat plugin architecture to take care of server side ceph cluster adds/leaves as part of the install process.  To install it:
+```# cp cephNodeChange.pm /opt/xcat/lib/perl/xCAT_monitoring
+# monadd cephNodeChange
+# monstart cephNodeChange```
+This script logs to ```/var/log/cephNodeChange.log```
+
 ##Build Process##
 * set up your RPM build root
 * download ceph-0.48argonaut.tar.bz2
