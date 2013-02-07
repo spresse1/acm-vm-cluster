@@ -1,5 +1,8 @@
-Name: mx
-Version: 1.2.16
+%define kversion %( uname -r | awk -F[-_] '{print $1}' )
+%define mxversion 1.2.16
+
+Name: kmod-mx
+Version: %{mxversion}_%(echo %{kversion} | sed s/-/_/g )
 Release: 1
 License: Myricom
 Summary: MX software for Myrinet
@@ -13,11 +16,14 @@ Source: http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz
 Patch0: mx-update-k[un]map_atomic.patch
 Patch1: mx-update-struct-ethtools_opt.patch
 
+# OpenAFS used %{_target_cpu} here.  I disagree
+Requires: kernel = %{kversion}
+
 %description
 MX software for Myrinet
 
 %prep
-%setup
+%setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
 %patch0 -p1
 %patch1 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
