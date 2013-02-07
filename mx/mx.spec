@@ -9,7 +9,9 @@ Group: Cluster software
 #Buildroot: /root/mx-1.2.16/rpm-buildroot
 Prefix: /usr/local
 Source: http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz
-Patch0: mx-update-to-3.x.patch
+#Patch0: mx-update-to-3.x.patch # Obsoleted by a better patch
+Patch0: mx-update-k[un]map_atomic.patch
+Patch1: mx-update-struct-ethtools_opt.patch
 
 %description
 MX software for Myrinet
@@ -17,6 +19,7 @@ MX software for Myrinet
 %prep
 %setup
 %patch0 -p1
+%patch1 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build

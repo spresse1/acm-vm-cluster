@@ -1,4 +1,4 @@
---- mx-1.2.16-orig/driver/linux/mx.c	2013-02-06 22:52:10.948504540 -0500
+--- mx-1.2.16/driver/linux/mx.c	2013-02-06 22:52:10.948504540 -0500
 +++ mx-1.2.16/driver/linux/mx.c	2013-02-06 23:00:42.982619752 -0500
 @@ -3387,13 +3387,22 @@ mx_copy_to_user_mm(mx_uaddr_t udst, void
      if (status != 1) {
