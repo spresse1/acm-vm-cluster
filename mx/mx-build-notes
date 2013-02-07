@@ -1,5 +1,0 @@
-First things first - this spec file needs some dependancies added before it'll go.  This document partially explores those...
-
-rpm-build (duh)
-kernel-devel (note to self: make sure all kernel-ml gets renamed to kernel*
-

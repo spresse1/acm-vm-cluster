@@ -1,0 +1,46 @@
+--- mx-1.2.16-orig/driver/linux/mx.c	2013-02-06 22:52:10.948504540 -0500
++++ mx-1.2.16/driver/linux/mx.c	2013-02-06 23:00:42.982619752 -0500
+@@ -3387,13 +3387,22 @@ mx_copy_to_user_mm(mx_uaddr_t udst, void
+     if (status != 1) {
+       return -status;
+     }
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+     kdst = kmap_atomic(page, KM_USER0);
++#else
++    kdst = kmap_atomic(page);
++#endif
+     /* copy_to_user_page should be used instead. But it uses some symbols that
+      * are not exported on some architectures...
+      */
+     memcpy(kdst+offset, ksrc, chunk);
+     mx_set_page_dirty_lock(page);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+     kunmap_atomic(kdst, KM_USER0);
++#else
++    kunmap_atomic(kdst);
++#endif
++
+     put_page(page);
+     ksrc += chunk;
+     udst += chunk;
+@@ -3425,12 +3434,20 @@ mx_copy_from_user_mm(char *kdst, mx_uadd
+     if (status != 1) {
+       return -status;
+     }
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+     ksrc = kmap_atomic(page, KM_USER0);
++#else
++    ksrc = kmap_atomic(page);
++#endif
+     /* copy_from_user_page should be used instead. But it uses some symbols that
+      * are not exported on some architectures...
+      */
+     memcpy(kdst, ksrc+offset, chunk);
++#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,37)
+     kunmap_atomic(ksrc, KM_USER0);
++#else
++    kunmap_atomic(ksrc);
++#endif
+     put_page(page);
+     usrc += chunk;
+     kdst += chunk;

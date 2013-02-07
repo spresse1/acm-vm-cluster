@@ -1,0 +1,18 @@
+--- mx-1.2.16/driver/linux/mx_ether.c	2013-02-06 23:39:39.294814531 -0500
++++ mx-1.2.16-orig/driver/linux/mx_ether.c	2013-02-06 23:26:52.098782219 -0500
+@@ -1712,7 +1712,6 @@ static MX_ETHTOOL_OPS_TYPE mx_ethtool_op
+ 	.get_drvinfo			= mx_ether_get_drvinfo,
+ 	.get_coalesce			= mx_ether_get_coalesce,
+ 	.set_coalesce			= mx_ether_set_coalesce,
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,3)
+ 	.get_rx_csum			= mx_ether_get_rx_csum,
+ 	.set_rx_csum			= mx_ether_set_rx_csum,
+ 	/* get_tx_csum, get_sg and get_tso are set by default since 2.6.24 */
+@@ -1721,7 +1720,6 @@ static MX_ETHTOOL_OPS_TYPE mx_ethtool_op
+ 	.get_sg				= ethtool_op_get_sg,
+ 	.get_tso			= ethtool_op_get_tso,
+ 	.set_sg				= ethtool_op_set_sg,
+-#endif
+ 	.get_link			= ethtool_op_get_link,
+ 	.get_strings			= mx_ether_get_strings,
+ #ifdef HAVE_SSET_COUNT
