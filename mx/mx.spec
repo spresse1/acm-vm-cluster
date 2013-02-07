@@ -15,8 +15,6 @@ Patch0: mx-update-to-3.x.patch
 MX software for Myrinet
 
 %prep
-rm -rf "$RPM_BUILDROOT_DIR"
-rm -rf "$RPM_BUILD_DIR"
 %setup
 %patch0 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
