@@ -35,28 +35,40 @@ Requires: kernel = %{kversion}
 Version: %{mxversion}
 Group: System Environment/Kernel
 Summary: dkms verison of mx2g driver
+Requires: dkms
 
 %description -n dkms-mx
 DKMS version of mx2g driver
 
 %prep
-%setup -n mx-%{mxversion} -D # tell it we're expecting to go to the mx folder
-# Also, don't delete the folder TODO remove
+%setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
 %patch0 -p1
 %patch1 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build
 ./configure --prefix="$RPM_BUILDROOT_DIR/"
+#mkdir -p "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}/"
+#cp -r `pwd` "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}"
 make
 
 %install
-echo "beginning insall"
+# make install
 make DESTDIR="$RPM_BUILD_ROOT" install
+
+#Some random cleanup
 rm "$RPM_BUILD_ROOT/lib"
-mkdir -p "$RPM_BUILD_ROOT/usr/src/"
-cp -r "%{_builddir}/mx-%{mxversion}/driver/linux" "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}"
+
+# copy in DKMS config
+mkdir -p "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}/"
 cp "$RPM_SOURCE_DIR/mx-dkms.conf" "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}/dkms.conf"
+
+#Get sources for DKMS
+mkdir -p "$RPM_BUILD_ROOT/usr/src/"
+tar xf %{S:0} -C "$RPM_BUILD_ROOT/usr/src/"
+cd "$RPM_BUILD_ROOT/usr/src/mx-%{mxversion}"
+./configure --prefix=/
+#make
 
 %files -n kmod-mx
 %defattr(-,root,root)
@@ -73,9 +85,9 @@ chkconfig --del mx || /bin/true
 
 %files -n dkms-mx
 %defattr(-,root,root)
-/usr/src/mx-%{mxversion}/*
+/usr/src/mx-%{mxversion}/
 
-%post
+%post -n kmod-mx
 #/bin/grep -q /opt/mx/lib32/ /etc/ld.so.conf || echo /opt/mx/lib32/ >> /etc/ld.so.conf
 #/bin/grep -q /opt/mx/lib64 /etc/ld.so.conf || echo /opt/mx/lib64/ >> /etc/ld.so.conf
 #/sbin/ldconfig
@@ -89,3 +101,8 @@ if [ -n "`/sbin/lspci -d 14c1:`" ] ; then
   chkconfig --add mx || /bin/true
 fi
 
+%pre -n dkms-mx
+dkms -m mx -v 1.2.16 --all || true
+
+%post -n dkms-mx
+dkms add -m mx -v %{mxversion}
