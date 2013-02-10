@@ -41,6 +41,7 @@ function checkForOSD {
 }
 
 function removeOSD {
+	log "Removing OSD..."
 	# Give me the name of the node to remove the osd entry for
 	NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
 	cat ${CONFFILE} | \
@@ -58,12 +59,16 @@ function removeOSD {
 }
 
 function addOSD {
+    log "Adding OSD"
     # Give me the name of the node to add an OSD for
     NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
     echo "[osd.${NODENUM}]
 	host = $1
 
 " >> ${CONFFILE}
+
+    # Does this run on the master or the client?
+    ceph osd create
 }
 
 for NODE in `echo ${NODES} | sed 's/,/ /g'`
@@ -80,18 +85,25 @@ do
 	else
 		log No OSD found, ignoring.
 	fi
+	
+	#See big-a$$ comment below as to why this is here though it shouldnt be
+	addOSD ${NODE}
 	;;
-    boot)
-	log ${NODE} set to boot, checking for existing OSD
-	checkForOSD $NODE
-	if [ $? -ne 0 ]
-	then
-		#need to add this OSD
-		log OSD found, skipping setup.
-	else
-		log No OSD found, setting up...
-		addOSD ${NODE}
-	fi
-	;;
+    #Contrry to its documentation, nodeset is never called in a hookable way 
+    # During the install process.  This directly contradicts the behavior
+    # specified on the nodeset page.  So this never gets called. F#ck.
+    # Instead we'll just call this code in install.
+#    boot)
+#	log ${NODE} set to boot, checking for existing OSD
+#	checkForOSD $NODE
+#	if [ $? -ne 0 ]
+#	then
+#		#need to add this OSD
+#		log OSD found, skipping setup.
+#	else
+#		log No OSD found, setting up...
+#		addOSD ${NODE}
+#	fi
+#	;;
     esac
 done
