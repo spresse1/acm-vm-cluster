@@ -59,6 +59,15 @@ else
 fi
 
 #from http://ceph.com/docs/master/rados/operations/add-or-rm-osds/
+#ceph osd create
+ceph osd in ${NODENUM}
+if [ $? -eq 0 ]
+then
+	log failed to create osd.${NODENUM}
+else
+	log OSD osd.${NODENUM}
+fi
+
 ceph-osd -i ${NODENUM} --mkfs --mkkey
 if [ $? -eq 0 ]
 then
@@ -77,5 +86,14 @@ else
 	exit 6
 fi
 
-#And finally make sure ceph starts at boot.
+#And make sure ceph starts at boot.
+chkconfig --add ceph
 chkconfig ceph on
+
+#start ceph for us....
+service ceph start
+
+# And give this OSD weight so it'll actually join the cluster
+ceph osd crush set osd.${NODENUM} 1.0 root=default rack=unknownrack host=`hostname`
+#ceph osd reweight ${NODENUM} 1.0
+
