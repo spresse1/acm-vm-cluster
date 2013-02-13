@@ -11,6 +11,9 @@ function nodeNameToNumber {
         echo $NUM
 }
 
+#This ought to make all output go to syslog?
+exec >(logger -t cephSetup[$$])
+
 # Gather the bit of data we'll need...
 NODENUM=$(( $(nodeNameToNumber `hostname` ) - 1 ))
 
@@ -29,12 +32,22 @@ else
 fi
 
 # Make the filesystem ceph will live on
+umount /dev/sda3
+if [ $? -eq 0 ]
+then
+	log Unmounted /dev/sda3
+else
+	log Unmounting /dev/sda3 failed:
+	#log `umount /dev/sda3`
+fi
+
 mkfs -t btrfs -L ceph /dev/sda3
 if [ $? -eq 0 ]
 then
 	log Made btrfs
 else
 	log Failed ot make btrfs!
+	#log `mkfs -t btrfs -L ceph /dev/sda3`
 	exit 2
 fi
 
@@ -45,6 +58,7 @@ then
 	log made "/var/lib/ceph/osd/ceph-${NODENUM}"
 else
 	log Failed to make OSD data dir
+	#log `mkdir -p "/var/lib/ceph/osd/ceph-${NODENUM}"`
 	exit 3
 fi
 
@@ -55,6 +69,7 @@ then
 	log Mounted btrfs disk...
 else
 	log Failed ot mount btrfs.  Bailing.
+	#log `mount LABEL=ceph "/var/lib/ceph/osd/ceph-${NODENUM}"`
 	exit 4
 fi
 
@@ -74,6 +89,7 @@ then
 	log ceph-osd ran.
 else
 	log ceph-osd init failed
+	#log `ceph-osd -i ${NODENUM} --mkfs --mkkey`
 	exit 5
 fi
 
@@ -83,6 +99,7 @@ then
 	log Keyring modified successfully.
 else
 	log keyring modification failed
+	#log `ceph auth add osd.${NODENUM} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/ceph-${NODENUM}/keyring`
 	exit 6
 fi
 
