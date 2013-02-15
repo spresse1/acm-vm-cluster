@@ -86,7 +86,7 @@
 %endif
 
 # Set pkg_release.
-%define pkg_release 6%{?buildid}%{?dist}
+%define pkg_release 7%{?buildid}%{?dist}
 
 #
 # Three sets of minimum package version requirements in the form of Conflicts.
