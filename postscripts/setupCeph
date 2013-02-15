@@ -1,0 +1,120 @@
+#!/bin/bash
+
+function log {
+        logger -t cephSetup[$$] "$@"
+}
+
+function nodeNameToNumber {
+        NUM=`echo $1 | grep -E -o '[0-9]*$'`
+        
+        #Using echo as a return function
+        echo $NUM
+}
+
+#This ought to make all output go to syslog?
+#exec >(logger -t cephSetup[$$])
+
+# Verify the path is as dumb as I think
+log Path is $PATH
+
+# Gather the bit of data we'll need...
+NODENUM=$(( $(nodeNameToNumber `hostname` ) - 1 ))
+
+# Set up the mount for config...
+log Beginning ceph setup on `hostname`
+echo "172.16.0.1:/etc/ceph      /etc/ceph/              nfs     defaults        0 0
+" >> /etc/fstab
+#and mount it
+mount -a
+if [ $? -eq 0 ]
+then
+	log Mounted NFS
+else
+	log Failed to mount NFS, bailing....
+	exit 1
+fi
+
+# Make the filesystem ceph will live on
+umount /dev/sda3
+if [ $? -eq 0 ]
+then
+	log Unmounted /dev/sda3
+else
+	log Unmounting /dev/sda3 failed:
+	log `umount /dev/sda3`
+fi
+
+mkfs -t btrfs -L ceph /dev/sda3
+if [ $? -eq 0 ]
+then
+	log Made btrfs
+else
+	log Failed ot make btrfs!
+	log `mkfs -t btrfs -L ceph /dev/sda3`
+	exit 2
+fi
+
+# And the dorectory...
+mkdir -p "/var/lib/ceph/osd/ceph-${NODENUM}"
+if [ $? -eq 0 ]
+then
+	log made "/var/lib/ceph/osd/ceph-${NODENUM}"
+else
+	log Failed to make OSD data dir
+	log `mkdir -p "/var/lib/ceph/osd/ceph-${NODENUM}"`
+	exit 3
+fi
+
+#We much mount this for setup to work...
+mount LABEL=ceph "/var/lib/ceph/osd/ceph-${NODENUM}"
+if [ $? -eq 0 ]
+then
+	log Mounted btrfs disk...
+else
+	log Failed ot mount btrfs.  Bailing.
+	log `mount LABEL=ceph "/var/lib/ceph/osd/ceph-${NODENUM}"`
+	exit 4
+fi
+
+#from http://ceph.com/docs/master/rados/operations/add-or-rm-osds/
+#ceph osd create
+# Looks like we dont need this anyway...
+#ceph osd in ${NODENUM}
+#if [ $? -eq 0 ]
+#then
+#	log failed to create osd.${NODENUM}
+#else
+#	log OSD osd.${NODENUM}
+#fi
+
+ceph-osd -i ${NODENUM} --mkfs --mkkey
+if [ $? -eq 0 ]
+then
+	log ceph-osd ran.
+else
+	log ceph-osd init failed
+	log `ceph-osd -i ${NODENUM} --mkfs --mkkey`
+	exit 5
+fi
+
+ceph auth add osd.${NODENUM} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/ceph-${NODENUM}/keyring
+if [ $? -eq 0 ]
+then
+	log Keyring modified successfully.
+else
+	log keyring modification failed
+	log `ceph auth add osd.${NODENUM} osd 'allow *' mon 'allow rwx' -i /var/lib/ceph/osd/ceph-${NODENUM}/keyring`
+	exit 6
+fi
+
+#And make sure ceph starts at boot.
+chkconfig --add ceph
+chkconfig ceph on
+
+#start ceph for us....
+service ceph start
+
+# And give this OSD weight so it'll actually join the cluster
+ceph osd crush set osd.${NODENUM} 1.0 root=default rack=unknownrack host=`hostname`
+#ceph osd reweight ${NODENUM} 1.0
+

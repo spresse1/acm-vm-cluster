@@ -1,0 +1,107 @@
+#!/bin/bash
+
+#############################
+#
+# Ceph teardown/setup script
+#
+#############################
+# 
+# This xCat script is intended to tie into nodeset.  (see man nodeset for
+# details).  It looks at the ACTION environment variable to determine
+# what to do.  On a node being set to install, it will attempt to remove the MDS
+# entrys in /etc/ceph.conf, if any.  (Note that in the ACM setup, this is an 
+# NFS mount shared amoung all the machines.  It is/will be backed by DRBD
+# to make the replication simpler).  It then attempts to remove the MDS from
+# the ceph cluster
+# On a node being set to boot, this will check if there is already an MDS by the
+# appropriate name.  if there is, it takes no action.  otherwise, it adds one.
+# (this is because it is possible for a node to be set to boot without having
+# first gone through an install.
+#
+##
+
+CONFFILE="/etc/ceph/ceph.conf"
+
+function log {
+	logger -t cephSetup[$$] "$@"
+}
+
+function nodeNameToNumber {
+	NUM=`echo $1 | grep -E -o '[0-9]*$'`
+	log $1 translates to number $NUM
+	
+	#Using echo as a return function
+	echo $NUM
+}
+
+function checkForOSD {
+	NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+	#log Checking for osd: osd.${NODENUM}
+	return `grep osd.${NODENUM} ${CONFFILE} | wc -l`
+}
+
+function removeOSD {
+	log "Removing OSD..."
+	# Give me the name of the node to remove the osd entry for
+	NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+	cat ${CONFFILE} | \
+		sed "/^\[osd.${NODENUM}\]/,/^\[/ { # find [osd.nodenum]
+			/^\[/ !{ d } #delete line if it doesnt begin with [
+			/^\[osd.${NODENUM}\]/ d #delete start line
+			#s/^\[osd.${NODENUM}\]// #delete start line
+			# This sed overall does the following:
+			# run on all lines from [osd.NODENUM] to [
+			# for each line:  
+			#  delete it if it doesnt begin with a bracket
+			#  delete it if it is the start line
+		}" > ${CONFFILE}.tmp
+		mv ${CONFFILE}.tmp ${CONFFILE}
+		ceph osd out ${NODENUM}
+}
+
+function addOSD {
+    log "Adding OSD"
+    # Give me the name of the node to add an OSD for
+    NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+    echo "[osd.${NODENUM}]
+	host = $1
+
+" >> ${CONFFILE}
+}
+
+for NODE in `echo ${NODES} | sed 's/,/ /g'`
+do
+    case ${ACTION} in
+    install)
+	log ${NODE} set to install, checking for existing OSD
+	checkForOSD $NODE
+	if [ $? -ne 0 ]
+	then
+		#OSD found, remove...
+		log OSD found, removing.
+		removeOSD ${NODE}
+	else
+		log No OSD found, ignoring.
+	fi
+	
+	#See big-a$$ comment below as to why this is here though it shouldnt be
+	addOSD ${NODE}
+	;;
+    #Contrry to its documentation, nodeset is never called in a hookable way 
+    # During the install process.  This directly contradicts the behavior
+    # specified on the nodeset page.  So this never gets called. F#ck.
+    # Instead we'll just call this code in install.
+#    boot)
+#	log ${NODE} set to boot, checking for existing OSD
+#	checkForOSD $NODE
+#	if [ $? -ne 0 ]
+#	then
+#		#need to add this OSD
+#		log OSD found, skipping setup.
+#	else
+#		log No OSD found, setting up...
+#		addOSD ${NODE}
+#	fi
+#	;;
+    esac
+done

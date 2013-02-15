@@ -1,0 +1,4 @@
+#! /bin/bash
+
+chkconfig mcelogd on
+service mcelogd start
