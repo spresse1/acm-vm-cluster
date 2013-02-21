@@ -35,7 +35,7 @@ function nodeNameToNumber {
 }
 
 function checkForOSD {
-	NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+	NODENUM=$(( 10#$(nodeNameToNumber $1 ) - 1 ))
 	#log Checking for osd: osd.${NODENUM}
 	return `grep osd.${NODENUM} ${CONFFILE} | wc -l`
 }
@@ -43,7 +43,7 @@ function checkForOSD {
 function removeOSD {
 	log "Removing OSD..."
 	# Give me the name of the node to remove the osd entry for
-	NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+	NODENUM=$(( 10#$(nodeNameToNumber $1 ) - 1 ))
 	cat ${CONFFILE} | \
 		sed "/^\[osd.${NODENUM}\]/,/^\[/ { # find [osd.nodenum]
 			/^\[/ !{ d } #delete line if it doesnt begin with [
@@ -62,7 +62,7 @@ function removeOSD {
 function addOSD {
     log "Adding OSD"
     # Give me the name of the node to add an OSD for
-    NODENUM=$(( $(nodeNameToNumber $1 ) - 1 ))
+    NODENUM=$(( 10#$(nodeNameToNumber $1 ) - 1 ))
     echo "[osd.${NODENUM}]
 	host = $1
 
