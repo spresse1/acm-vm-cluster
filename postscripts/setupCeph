@@ -18,7 +18,7 @@ function nodeNameToNumber {
 log Path is $PATH
 
 # Gather the bit of data we'll need...
-NODENUM=$(( $(nodeNameToNumber `hostname` ) - 1 ))
+NODENUM=$(( 10#$(nodeNameToNumber `hostname` ) - 1 ))
 
 # Set up the mount for config...
 log Beginning ceph setup on `hostname`
