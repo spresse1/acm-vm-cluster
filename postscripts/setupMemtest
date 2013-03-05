@@ -1,0 +1,9 @@
+#! /bin/sh
+
+MEMTESTV=`rpm -qv memtest86+ --qf '%{VERSION}'`
+
+echo "title Memtest86+ $MEMTESTV (Serial console)
+	root (hd0,0)
+	kernel /boot/memtest86+-${MEMTESTV} console=ttyS0,9600n8
+
+" >> /etc/grub.conf
