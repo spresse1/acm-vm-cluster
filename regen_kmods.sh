@@ -14,6 +14,29 @@
 #
 #rpmbuild -ba ~/acm-vm-cluster/kernel/kernel-i${KVERMAJ}.spec
 #
+
+BUILDOPENAFS=0
+BUILDMX=0
+
+if [ $# -eq 0 ];
+then
+	BUILDOPENAFS=1
+	BUILDMX=1
+fi
+
+while (( "$#" )); do
+case $1 in
+mx)
+	BUILDMX=1
+	;;
+openafs)
+	BUILDOPENAFS=1
+	;;
+esac
+done
+
+if [ $BUILDOPENAFS -eq 1 ]; then
+
 cd
 rm -rf openafs*
 
@@ -31,10 +54,11 @@ cd openafs-1.6.1/src/packaging/RedHat/
 yum install -y `rpmbuild --rebuild openafs-1.6.1-1.src.rpm 2>&1 | grep 'is needed by'`
 rpmbuild --rebuild openafs-1.6.1-1.src.rpm
 
-
+fi
 #END OpenAFS Build
 
 #BEGIN mx
+if [ $BUILDMX -eq 1 ]; then
 cd ~/rpmbuild/SOURCES
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx.spec'
 wget 'http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz'
@@ -42,3 +66,5 @@ wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-k%5Bun%
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-struct-ethtools_opt.patch'
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-dkms.conf'
 rpmbuild -ba mx.spec
+
+fi
