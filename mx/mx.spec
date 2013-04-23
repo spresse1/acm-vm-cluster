@@ -45,6 +45,7 @@ DKMS version of mx2g driver
 %setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build
