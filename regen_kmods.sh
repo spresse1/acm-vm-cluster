@@ -33,6 +33,9 @@ openafs)
 	BUILDOPENAFS=1
 	;;
 esac
+
+shift
+
 done
 
 if [ $BUILDOPENAFS -eq 1 ]; then
