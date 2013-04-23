@@ -9,6 +9,7 @@ License: Myricom
 Summary: MX software for Myrinet
 Patch0: mx-update-k[un]map_atomic.patch
 Patch1: mx-update-struct-ethtools_opt.patch
+Patch2: mx-update-daemonize.patch
 
 %description
 MX software for Myrinet Fiber cards
