@@ -62,6 +62,7 @@ fi
 
 #BEGIN mx
 if [ $BUILDMX -eq 1 ]; then
+rpmdev-setuptree
 cd ~/rpmbuild/SOURCES
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx.spec'
 wget 'http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz'
