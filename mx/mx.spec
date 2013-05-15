@@ -10,6 +10,7 @@ Summary: MX software for Myrinet
 Patch0: mx-update-k[un]map_atomic.patch
 Patch1: mx-update-struct-ethtools_opt.patch
 Patch2: mx-update-daemonize.patch
+Patch3: mx-update-kernel_thread-to-kthread_run.patch
 
 %description
 MX software for Myrinet Fiber cards
@@ -46,6 +47,7 @@ DKMS version of mx2g driver
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build

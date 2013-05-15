@@ -70,6 +70,7 @@ wget 'http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz'
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-k%5Bun%5Dmap_atomic.patch'
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-daemonize.patch'
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-struct-ethtools_opt.patch'
+wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-kernel_thread-to-kthread_run.patch'
 wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-dkms.conf'
 rpmbuild -ba mx.spec
 
