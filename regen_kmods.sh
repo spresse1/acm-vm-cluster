@@ -64,14 +64,15 @@ fi
 if [ $BUILDMX -eq 1 ]; then
 rpmdev-setuptree
 cd ~/rpmbuild/SOURCES
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx.spec'
-rm -f mx2g_1.2.16.tar.gz
-wget 'http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz'
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-k%5Bun%5Dmap_atomic.patch'
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-daemonize.patch'
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-struct-ethtools_opt.patch'
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-kernel_thread-to-kthread_run.patch'
-wget 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-dkms.conf'
+
+# Use -N with wget to not fetch unless newer
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx.spec'
+wget -N 'http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz'
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-k%5Bun%5Dmap_atomic.patch'
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-daemonize.patch'
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-struct-ethtools_opt.patch'
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-update-kernel_thread-to-kthread_run.patch'
+wget -N 'https://raw.github.com/spresse1/acm-vm-cluster/master/mx/mx-dkms.conf'
 rpmbuild -ba mx.spec
 
 fi
