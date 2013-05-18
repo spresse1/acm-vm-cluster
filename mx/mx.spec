@@ -2,7 +2,7 @@
 %define mxversion 1.2.16
 
 Name: mx
-Release: 1
+Release: 2
 Version: %{mxversion}
 Source: http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz
 License: Myricom
@@ -44,6 +44,7 @@ DKMS version of mx2g driver
 
 %prep
 %setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
+autoreconf -f
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1

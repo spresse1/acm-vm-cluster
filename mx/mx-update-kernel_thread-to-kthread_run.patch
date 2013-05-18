@@ -1,12 +1,12 @@
 diff -rupN mx-1.2.16-orig/driver/linux/mx_arch_klib.h mx-1.2.16/driver/linux/mx_arch_klib.h
---- mx-1.2.16-orig/driver/linux/mx_arch_klib.h	2013-05-14 23:46:47.644295112 -0400
-+++ mx-1.2.16/driver/linux/mx_arch_klib.h	2013-05-15 00:47:51.481347107 -0400
+--- mx-1.2.16-orig/driver/linux/mx_arch_klib.h	2012-03-16 17:30:11.000000000 -0400
++++ mx-1.2.16/driver/linux/mx_arch_klib.h	2013-05-18 12:42:28.041941027 -0400
 @@ -63,7 +63,11 @@ mx_klib_thread_create(mx_klib_thread_t *
  		      int (*func)(void *), void *arg) {
    int ret;
    init_completion(threadp);
-+#if defined(HAVE_LINUX_KTHREAD_RUN)
-+  ret = kthread_run(func, arg, "Generic MX kernel thread");
++#if LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)
++  ret = PTR_ERR(kthread_run(func, arg, "Generic MX kernel thread"));
 +#else
    ret = kernel_thread(func, arg, CLONE_FS|CLONE_FILES);
 +#endif
@@ -14,17 +14,28 @@ diff -rupN mx-1.2.16-orig/driver/linux/mx_arch_klib.h mx-1.2.16/driver/linux/mx_
  }
  
 diff -rupN mx-1.2.16-orig/driver/linux/mx.c mx-1.2.16/driver/linux/mx.c
---- mx-1.2.16-orig/driver/linux/mx.c	2013-05-14 23:46:46.827290921 -0400
-+++ mx-1.2.16/driver/linux/mx.c	2013-05-15 00:41:24.654472813 -0400
+--- mx-1.2.16-orig/driver/linux/mx.c	2012-03-16 17:30:11.000000000 -0400
++++ mx-1.2.16/driver/linux/mx.c	2013-05-18 12:43:13.994175813 -0400
 @@ -3184,7 +3184,11 @@ mx_init_module (void)
    
    init_completion(&mx_watchdog_completion);
    init_waitqueue_head(&mx_watchdog_queue);
-+#if defined(HAVE_LINUX_KTHREAD_RUN)
-+  if (IS_ERR(kthread_run(mx_watchdog_thread, 0, "MX Watchdog thread"))) {
++#if LINUX_VERSION_CODE > KERNEL_VERSION(3,7,0)
++  if (IS_ERR(PTR_ERR(kthread_run(mx_watchdog_thread, 0, "MX Watchdog thread")))) {
 +#else
    if (kernel_thread(mx_watchdog_thread, 0, CLONE_FS | CLONE_FILES) < 0) {
 +#endif
      MX_WARN(("Cannot start the watchdog thread: No Parity recovery\n"));
      complete(&mx_watchdog_completion);
    }
+diff -rupN mx-1.2.16-orig/driver/linux/mx_linux_compat.h mx-1.2.16/driver/linux/mx_linux_compat.h
+--- mx-1.2.16-orig/driver/linux/mx_linux_compat.h	2012-03-16 17:30:11.000000000 -0400
++++ mx-1.2.16/driver/linux/mx_linux_compat.h	2013-05-18 12:44:10.484566838 -0400
+@@ -48,6 +48,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/time.h>
+ #include <linux/netdevice.h>
++#include <linux/kthread.h>
+ #include <asm/io.h>
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
