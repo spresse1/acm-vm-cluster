@@ -2,15 +2,14 @@
 %define mxversion 1.2.16
 
 Name: mx
-Release: 2
+Release: 3
 Version: %{mxversion}
 Source: http://www.myricom.com/pub/MX2G/mx2g_1.2.16.tar.gz
 License: Myricom
 Summary: MX software for Myrinet
 Patch0: mx-update-k[un]map_atomic.patch
 Patch1: mx-update-struct-ethtools_opt.patch
-Patch2: mx-update-daemonize.patch
-Patch3: mx-update-kernel_thread-to-kthread_run.patch
+Patch2: mx-update-kernel_thread-to-kthread_run.patch
 
 %description
 MX software for Myrinet Fiber cards
@@ -44,11 +43,9 @@ DKMS version of mx2g driver
 
 %prep
 %setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
-#autoreconf -f
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 echo "BUILDDIR: $RPM_BUILD_DIR"
 
 %build
