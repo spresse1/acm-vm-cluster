@@ -44,7 +44,7 @@ DKMS version of mx2g driver
 
 %prep
 %setup -n mx-%{mxversion} # tell it we're expecting to go to the mx folder
-autoreconf -f
+#autoreconf -f
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
